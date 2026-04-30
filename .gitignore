@@ -1,0 +1,3 @@
+supervisely.env
+**/__pycache__/
+input_pcds/

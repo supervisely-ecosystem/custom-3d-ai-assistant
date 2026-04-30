@@ -1,1 +1,1 @@
-# custom-3d-ai-assistant
+# Custom 3D AI Assistant
