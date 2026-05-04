@@ -3,6 +3,7 @@ import numpy as np
 import open3d as o3d
 import supervisely as sly
 from supervisely.geometry.cuboid_3d import Cuboid3d, Vector3d
+from supervisely.api.module_api import ApiField
 
 
 labeling_proposals = {}
@@ -93,3 +94,38 @@ def get_2d_anns(image_id, dataset_id, photo_context_img, api, figure_ids):
             line_points = [[point.col, point.row] for point in line_points_loc]
             anns_2d.append(("line", line_points, figure.id))
     return anns_2d
+
+
+def load_photo_context_data(dataset_id, image_id, api):
+    """
+    Loads photo context image data: image, extrinsic and intrinsic matrices
+
+    Parameters:
+    - pcd_id: an ID of point cliud
+
+    Returns:
+
+    - a list of dictionaries containing images, extrinsic and intrinsic matrices
+    """
+    # get image info
+    photo_context_data = {}
+    filters = [{"field": ApiField.ID, "operator": "=", "value": image_id}]
+    img_info = api.pointcloud.get_list_all_pages(
+        "point-clouds.images.list",
+        {ApiField.DATASET_ID: dataset_id, ApiField.FILTER: filters},
+        convert_json_info_cb=lambda x: x,
+    )[0]
+    # download related image
+    photo_context_img_path = f"related_images/{image_id}.jpg"
+    api.pointcloud.download_related_image(img_info["id"], photo_context_img_path)
+    photo_context_img = sly.image.read(photo_context_img_path)
+    # extract extrinsic and intrinsic matrices from image info
+    extrinsic_matrix = img_info["meta"]["sensorsData"]["extrinsicMatrix"]
+    extrinsic_matrix = np.asarray(extrinsic_matrix).reshape((3, 4))
+    intrinsic_matrix = img_info["meta"]["sensorsData"]["intrinsicMatrix"]
+    intrinsic_matrix = np.asarray(intrinsic_matrix).reshape((3, 3))
+
+    photo_context_data["image"] = photo_context_img
+    photo_context_data["extrinsic_matrix"] = extrinsic_matrix
+    photo_context_data["intrinsic_matrix"] = intrinsic_matrix
+    return photo_context_data

@@ -120,12 +120,14 @@ def track_cuboids(request: Request):
 
     for idx, current_pcd_id in enumerate(pcd_ids[1:]):
         # get access to previous and current point clouds
-        target_pcd, _ = f.read_pcd(current_pcd_id, api)
-        previous_pcd_id = pcd_ids[idx]
-        source_pcd, _ = f.read_pcd(previous_pcd_id, api)
+        # (not used in our example but can be useful for real implementations)
+        # target_pcd, _ = f.read_pcd(current_pcd_id, api)
+        # previous_pcd_id = pcd_ids[idx]
+        # source_pcd, _ = f.read_pcd(previous_pcd_id, api)
 
         tracked_cuboids = []
 
+        # apply pseudo-tracking
         for it, (object_id, source_cuboid) in enumerate(zip(object_ids, cuboids)):
 
             tracked_cuboid = f.clone_cuboid_with_random_shift(source_cuboid, max_shift=0.5)
@@ -197,6 +199,7 @@ def get_ground_indices(request: Request):
     sly.logger.info(f"Segmenting ground on point cloud with ID {pcd_id}...")
     # read point cloud
     pcd, _ = f.read_pcd(pcd_id, api)
+    # generate random mask
     ground_indexes = np.random.choice(range(len(pcd.points)), round(0.3 * len(pcd.points)), replace=False)
 
     response = {
@@ -225,6 +228,20 @@ def transfer_masks_to_pcd(request: Request):
     figures = api.image.figure.download(dataset_id, [photo_context_img_id])[photo_context_img_id]
     if figure_ids:
         figures = [fig for fig in figures if fig.id in figure_ids]
+
+    # get photo context image data
+    # (not used in our example but can be useful for real implementations)
+    # photo_context_data = f.load_photo_context_data(
+    #     dataset_id, photo_context_img_id, api
+    # )
+    # photo_context_img = photo_context_data["image"]
+    # extrinsic_matrix = photo_context_data["extrinsic_matrix"]
+    # intrinsic_matrix = photo_context_data["intrinsic_matrix"]
+    # get 2d annotations
+    # (not used in our example but can be useful for real implementations)
+    # anns_2d = f.get_2d_anns(
+    #     photo_context_img_id, dataset_id, photo_context_img, api, figure_ids
+    # )
 
     anns_3d = []
     n_pts = len(pcd_points)
