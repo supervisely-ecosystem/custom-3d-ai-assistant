@@ -20,5 +20,6 @@
         "sly_point_cloud_tracking"
     ],
     "community_agent": false,
-    "headless": true
+    "headless": true,
+    "is3DAIAssistant": true
 }
