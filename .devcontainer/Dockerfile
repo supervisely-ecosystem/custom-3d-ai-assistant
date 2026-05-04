@@ -5,3 +5,5 @@ RUN pip3 install open3d==0.18.0
 
 RUN apt-get -y install curl
 RUN apt-get update && apt -y install wireguard iproute2
+
+LABEL "role"="development"

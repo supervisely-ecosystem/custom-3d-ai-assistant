@@ -1,0 +1,23 @@
+{
+    "name": "Custom 3D AI assistant",
+    "type": "app",
+    "version": "2.0.0",
+    "categories": [
+        "neural network",
+        "pointclouds",
+        "detection & tracking",
+        "serve"
+    ],
+    "description": "Deploy custom labeling assistant for 3D point clouds as REST API service",
+    "docker_image": "supervisely/custom-3d-ai-assistant:1.0.0",
+    "entrypoint": "python3 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --ws websockets",
+    "port": 8000,
+    "task_location": "application_sessions",
+    "min_instance_version": "6.15.35",
+    "isolate": true,
+    "session_tags": [
+        "3d_smart_tool",
+        "sly_point_cloud_tracking"
+    ],
+    "community_agent": false
+}
