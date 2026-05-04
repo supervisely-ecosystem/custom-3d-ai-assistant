@@ -19,5 +19,6 @@
         "3d_smart_tool",
         "sly_point_cloud_tracking"
     ],
-    "community_agent": false
+    "community_agent": false,
+    "headless": true
 }
